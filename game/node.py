@@ -14,6 +14,9 @@ class Node:
         self.__position = position
         self.__identifier = identifier
 
+    def is_directly_connected_to(self, node: "Node"):
+        return node in self.__connected_nodes
+
     def get_connected_nodes(self):
         return self.__connected_nodes.copy()
 

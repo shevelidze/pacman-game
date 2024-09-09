@@ -8,13 +8,13 @@ def flatten(list_):
 
 def get_angle_direction(angle):
     if angle > -math.pi / 4 and angle <= math.pi / 4:
-        return Direction.RIGHT
-    if angle > math.pi / 4 and angle <= 3 * math.pi / 4:
-        return Direction.UP
-    if angle > 3 * math.pi / 4 or angle <= -3 * math.pi / 4:
-        return Direction.LEFT
-    else:
         return Direction.DOWN
+    if angle > math.pi / 4 and angle <= 3 * math.pi / 4:
+        return Direction.RIGHT
+    if angle > 3 * math.pi / 4 or angle <= -3 * math.pi / 4:
+        return Direction.UP
+    else:
+        return Direction.LEFT
 
 
 def get_distance(position1, position2):

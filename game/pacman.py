@@ -1,37 +1,63 @@
 import random
 import pygame
-from .object_on_field import ObjectOnField
+from .movable_object_on_field import MovableObjectOnField
+from .direction import Direction
 
-SPEED = 0.1
 
+class Pacman(MovableObjectOnField):
+    def __init__(
+        self,
+        field,
+        previous_node,
+        next_node=None,
+        distance_from_previous_node=None,
+    ):
+        super().__init__(
+            field, previous_node, 0.1, next_node, distance_from_previous_node
+        )
 
-class Pacman(ObjectOnField):
-    def tick(self):
-        if self.started_moving_at is None:
-            self.started_moving_at = pygame.time.get_ticks()
+    def tick(self, events):
+        super().tick(events)
 
-        if (
-            self._get_traveled_ratio(additional_distance=self.__get_passed_distance())
-            >= 1
+        if not self._is_moving():
+            self._start_moving()
+
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.__next_direction = Direction.LEFT
+                if event.key == pygame.K_RIGHT:
+                    self.__next_direction = Direction.RIGHT
+                if event.key == pygame.K_UP:
+                    self.__next_direction = Direction.UP
+                if event.key == pygame.K_DOWN:
+                    self.__next_direction = Direction.DOWN
+
+        if not self.__next_direction is None and self.__next_direction.is_opposite_to(
+            self._get_direction()
         ):
-            self._distance_from_previous_node = 0
-            self._previous_node = self._next_node
-            self._next_node = random.choice(self._next_node.get_connected_nodes())
-            self.started_moving_at = pygame.time.get_ticks()
+            self._turn_around()
 
-    def __get_passed_distance(self):
-        time_passed = pygame.time.get_ticks() - self.started_moving_at
-        return time_passed * SPEED
+    def _on_reached_node(self):
+        if self.__next_direction is None:
+            return
+
+        next_node = self._next_node.get_connected_node_by_direction(
+            self.__next_direction
+        )
+
+        if next_node is None:
+            return
+
+        self._set_next_node(next_node)
 
     def draw(self, screen):
 
         pygame.draw.circle(
             screen,
             (255, 255, 0),
-            self._get_position_on_screen(
-                additional_distance=self.__get_passed_distance()
-            ),
+            self._get_position_on_screen(),
             15,
         )
 
-    started_moving_at = None
+    __next_direction: Direction | None = None

@@ -180,7 +180,8 @@ class OriginalMapNodesBuilder:
         self.__storage.connect_nodes_by_identifiers("x6y8", "x6y7")
         self.__storage.connect_nodes_by_identifiers("x6y7", "x7y7")
         self.__storage.connect_nodes_by_identifiers("x7y7", "x8y7")
-        self.__storage.connect_nodes_by_identifiers("x8y7", "x8y9")
+        self.__storage.connect_nodes_by_identifiers("x8y8", "x8y9")
+        self.__storage.connect_nodes_by_identifiers("x8y8", "x8y7")
         self.__storage.connect_nodes_by_identifiers("x7y6", "x7y7")
         #
         self.__storage.connect_nodes_by_identifiers("x5y4", "ghosts_room_outer_exit")

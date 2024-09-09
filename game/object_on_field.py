@@ -20,7 +20,7 @@ class ObjectOnField:
     def draw(self, screen: pygame.Surface):
         raise NotImplementedError
 
-    def tick(self):
+    def tick(self, events: list[pygame.event.Event]):
         pass
 
     def _get_position(self, additional_distance=None):
@@ -48,11 +48,13 @@ class ObjectOnField:
             self._get_position(additional_distance=additional_distance)
         )
 
-    def _get_traveled_ratio(self, additional_distance=None):
-        previous_node_position = self._previous_node.get_position()
-        next_node_position = self._next_node.get_position()
+    def _get_distance_between_nodes(self):
+        return get_distance(
+            self._previous_node.get_position(), self._next_node.get_position()
+        )
 
-        full_distance = get_distance(previous_node_position, next_node_position)
+    def _get_traveled_ratio(self, additional_distance=None):
+        full_distance = self._get_distance_between_nodes()
 
         return (
             self._distance_from_previous_node
