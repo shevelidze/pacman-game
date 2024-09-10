@@ -12,9 +12,7 @@ class Pacman(MovableObjectOnField):
         next_node=None,
         distance_from_previous_node=None,
     ):
-        super().__init__(
-            field, previous_node, 0.1, next_node, distance_from_previous_node
-        )
+        super().__init__(field, previous_node, next_node, distance_from_previous_node)
 
     def tick(self, events):
         super().tick(events)
@@ -60,4 +58,5 @@ class Pacman(MovableObjectOnField):
             15,
         )
 
-    __next_direction: Direction | None = None
+    __next_direction: Direction | None = Direction.LEFT
+    _speed = 0.1

@@ -23,6 +23,15 @@ class ObjectOnField:
     def tick(self, events: list[pygame.event.Event]):
         pass
 
+    def get_next_node(self):
+        return self._next_node
+
+    def get_previous_node(self):
+        return self._previous_node
+
+    def get_last_node(self):
+        return self._next_node if self._next_node is not None else self._previous_node
+
     def _get_position(self, additional_distance=None):
         if self._next_node is None:
             return self._previous_node.get_position()

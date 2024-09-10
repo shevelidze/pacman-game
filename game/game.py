@@ -6,6 +6,7 @@ from .nodes_storage import NodesStorage
 from .original_map_nodes_builder import OriginalMapNodesBuilder
 from .pacman import Pacman
 from .game_field import GameField
+from .ghosts import Blinky, Clyde, Inky, Pinky
 
 pygame.init()
 
@@ -21,14 +22,39 @@ class Game:
         self.__field = GameField(self.__screen)
         self.__nodes = nodes_builder.get_nodes()
         self.__nodes_storage = NodesStorage(self.__nodes)
-        self.__objects_on_field = [
-            Pacman(
-                self.__field,
-                self.__nodes_storage.get_node_by_identifier("x6y8"),
-                self.__nodes_storage.get_node_by_identifier("x5y8"),
-                11,
-            )
-        ]
+
+        pacman = Pacman(
+            self.__field,
+            self.__nodes_storage.get_node_by_identifier("x6y8"),
+            self.__nodes_storage.get_node_by_identifier("x5y8"),
+            11,
+        )
+
+        blinky = Blinky(
+            self.__field,
+            self.__nodes_storage.get_node_by_identifier("ghosts_room_x1y1"),
+            pacman,
+        )
+
+        clyde = Clyde(
+            self.__field,
+            self.__nodes_storage.get_node_by_identifier("ghosts_room_x2y1"),
+            pacman,
+        )
+
+        inky = Inky(
+            self.__field,
+            self.__nodes_storage.get_node_by_identifier("ghosts_room_x1y2"),
+            pacman,
+        )
+
+        pinky = Pinky(
+            self.__field,
+            self.__nodes_storage.get_node_by_identifier("ghosts_room_x2y2"),
+            pacman,
+        )
+
+        self.__objects_on_field = [pacman, blinky, clyde, inky, pinky]
 
     def runLoop(self):
         edges_positions = self.__nodes[0].get_edges_positions()

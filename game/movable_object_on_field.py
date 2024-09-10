@@ -9,19 +9,17 @@ class MovableObjectOnField(ObjectOnField):
         self,
         field,
         previous_node,
-        speed,
         next_node=None,
         distance_from_previous_node=None,
     ):
         super().__init__(field, previous_node, next_node, distance_from_previous_node)
-        self.__speed = speed
 
     def tick(self, events):
         if self._has_reached_node():
             self._on_reached_node()
 
     def _has_reached_node(self):
-        return (
+        return self._next_node is None or (
             self._get_traveled_ratio(additional_distance=self.__get_passed_distance())
             >= 1
         )
@@ -50,26 +48,26 @@ class MovableObjectOnField(ObjectOnField):
         self.__started_moving_at = pygame.time.get_ticks()
 
     def _set_next_node(self, next_node: Node):
-        if (
-            not self._next_node.is_directly_connected_to(next_node)
-            or not self._has_reached_node()
-        ):
-            raise RuntimeError("Cannot set next node")
+        if not self._next_node is None:
+            self._previous_node = self._next_node
 
-        self._previous_node = self._next_node
         self._next_node = next_node
         self._distance_from_previous_node = 0
         self.__started_moving_at = None
 
     def _get_direction(self):
-        return self._previous_node.get_node_direction(self._next_node)
+        return (
+            self._previous_node.get_node_direction(self._next_node)
+            if self._next_node
+            else None
+        )
 
     def __get_passed_distance(self):
         if self.__started_moving_at is None:
             return 0
 
         time_passed = pygame.time.get_ticks() - self.__started_moving_at
-        return time_passed * self.__speed
+        return time_passed * self._speed
 
     def _turn_around(self):
         self._distance_from_previous_node = (
@@ -86,4 +84,5 @@ class MovableObjectOnField(ObjectOnField):
         if self._is_moving():
             self._start_moving()
 
+    _speed = 0.01
     __started_moving_at = None

@@ -1,6 +1,6 @@
 from typing import Callable, Self
 import math
-from .utils import flatten, get_angle_direction, get_vector
+from .utils import flatten, get_angle_direction, get_vector, get_distance
 from .direction import Direction
 
 
@@ -64,6 +64,68 @@ class Node:
                 return node
 
         return None
+
+    def get_shortest_path_to(self, node: "Node"):
+        distances = node.find_shortest_distances()
+
+        if not self in distances:
+            return None
+
+        path = []
+
+        current_node = self
+
+        while current_node != node:
+            path.append(current_node)
+            current_node = min(
+                current_node.__connected_nodes,
+                key=lambda node: distances[node] if node in distances else float("inf"),
+            )
+
+        path.append(node)
+
+        return path
+
+    # Dijkstra's algorithm
+    def find_shortest_distances(self):
+        nodes = set([self])
+        visited_nodes = set()
+        distances = {self: 0}
+
+        current_node = self
+
+        while not current_node is None:
+            nodes = nodes.union(current_node.__connected_nodes)
+
+            for node in current_node.__connected_nodes:
+                if node in visited_nodes:
+                    continue
+
+                new_distance = distances[current_node] + current_node.get_distance_to(
+                    node
+                )
+
+                if not node in distances or new_distance < distances[node]:
+                    distances[node] = new_distance
+
+            ordered_unvisited_nodes = sorted(
+                filter(
+                    lambda node: not node in visited_nodes and node in distances, nodes
+                ),
+                key=lambda node: distances[node],
+            )
+
+            if len(ordered_unvisited_nodes) == 0:
+                current_node = None
+            else:
+                current_node = ordered_unvisited_nodes[0]
+
+            visited_nodes.add(current_node)
+
+        return distances
+
+    def get_distance_to(self, node: "Node"):
+        return get_distance(self.get_position(), node.get_position())
 
     def bfs(callback: Callable[["Node"], bool]):
         visited_nodes = set()
