@@ -30,7 +30,10 @@ class Node:
         self.__connected_nodes.append(node)
         node.__connected_nodes.append(self)
 
-    def get_edges_positions(self, visited_nodes: set["Node"] = set()):
+    def get_edges_positions(self, visited_nodes: set["Node"] = None):
+        if visited_nodes is None:
+            visited_nodes = set()
+
         if self in visited_nodes:
             return set()
 
@@ -43,7 +46,7 @@ class Node:
 
         return edges_positions.union(
             flatten(
-                list(connected_node.get_edges_positions())
+                list(connected_node.get_edges_positions(visited_nodes))
                 for connected_node in self.__connected_nodes
             )
         )

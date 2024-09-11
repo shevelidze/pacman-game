@@ -12,7 +12,7 @@ class ObjectOnField:
         next_node: Node = None,
         distance_from_previous_node: float = None,
     ):
-        self.__field = field
+        self._field = field
         self._previous_node = previous_node
         self._next_node = next_node
         self._distance_from_previous_node = distance_from_previous_node
@@ -53,9 +53,12 @@ class ObjectOnField:
         return add_vectors(previous_node_position, vector)
 
     def _get_position_on_screen(self, additional_distance=None):
-        return self.__field.map_graph_position_to_screen(
+        return self._field.map_graph_position_to_screen(
             self._get_position(additional_distance=additional_distance)
         )
+
+    def _get_game_time(self):
+        return self._field.get_game_clock().get_time()
 
     def _get_distance_between_nodes(self):
         return get_distance(

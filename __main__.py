@@ -2,4 +2,4 @@ from game import Game
 
 game = Game()
 
-game.runLoop()
+game.run_loop()

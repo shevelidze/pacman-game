@@ -3,6 +3,7 @@ import random
 
 from .movable_object_on_field import MovableObjectOnField
 from .pacman import Pacman
+from .utils import get_distance
 
 
 class Ghost(MovableObjectOnField):
@@ -65,6 +66,9 @@ class Ghost(MovableObjectOnField):
 
     def tick(self, events):
         super().tick(events)
+
+        if get_distance(self._get_position(), self.__pacman._get_position()) < 10:
+            self._field.handle_pacman_eaten()
 
         if not self._is_moving():
             self._start_moving()

@@ -1,5 +1,4 @@
 import random
-import pygame
 from .object_on_field import ObjectOnField
 from .node import Node
 
@@ -45,7 +44,7 @@ class MovableObjectOnField(ObjectOnField):
         self.__started_moving_at = None
 
     def _start_moving(self):
-        self.__started_moving_at = pygame.time.get_ticks()
+        self.__started_moving_at = self._get_game_time()
 
     def _set_next_node(self, next_node: Node):
         if not self._next_node is None:
@@ -66,7 +65,7 @@ class MovableObjectOnField(ObjectOnField):
         if self.__started_moving_at is None:
             return 0
 
-        time_passed = pygame.time.get_ticks() - self.__started_moving_at
+        time_passed = self._get_game_time() - self.__started_moving_at
         return time_passed * self._speed
 
     def _turn_around(self):
