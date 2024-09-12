@@ -39,3 +39,14 @@ def add_vectors(vector1, vector2):
 
 def multiply_vector_by_scalar(vector, scalar):
     return (vector[0] * scalar, vector[1] * scalar)
+
+
+def move_in_direction(position, direction, distance):
+    if direction == Direction.UP:
+        return position[0], position[1] - distance
+    if direction == Direction.DOWN:
+        return position[0], position[1] + distance
+    if direction == Direction.LEFT:
+        return position[0] - distance, position[1]
+    if direction == Direction.RIGHT:
+        return position[0] + distance, position[1]

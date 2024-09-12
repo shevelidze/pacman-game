@@ -1,4 +1,4 @@
-from typing import Callable, Self
+from typing import Callable, Self, Iterable
 import math
 from .utils import flatten, get_angle_direction, get_vector, get_distance
 from .direction import Direction
@@ -68,37 +68,54 @@ class Node:
 
         return None
 
-    def get_shortest_path_to(self, node: "Node"):
-        distances = node.find_shortest_distances()
+    def get_shortest_path_to(
+        self, node: "Node", forbidden_on_start_node: "Node" = None
+    ):
+        distances = self.find_shortest_distances(forbidden_on_start_node)
 
-        if not self in distances:
+        if not node in distances:
             return None
 
         path = []
 
-        current_node = self
+        current_node = node
 
-        while current_node != node:
+        while current_node != self:
             path.append(current_node)
+
+            connected_nodes = current_node.__connected_nodes
+
+            if current_node == forbidden_on_start_node:
+                connected_nodes = filter(
+                    lambda filter_node: not filter_node == self, connected_nodes
+                )
+
             current_node = min(
-                current_node.__connected_nodes,
-                key=lambda node: distances[node] if node in distances else float("inf"),
+                connected_nodes,
+                key=lambda min_node: (
+                    distances[min_node] if min_node in distances else float("inf")
+                ),
             )
 
-        path.append(node)
+        path.append(self)
 
-        return path
+        return list(reversed(path))
 
     # Dijkstra's algorithm
-    def find_shortest_distances(self):
+    def find_shortest_distances(self, forbidden_on_start_node: "Node" = None):
         nodes = set([self])
         visited_nodes = set()
         distances = {self: 0}
 
         current_node = self
+        is_start = True
 
         while not current_node is None:
+            visited_nodes.add(current_node)
             nodes = nodes.union(current_node.__connected_nodes)
+
+            if is_start and forbidden_on_start_node in current_node.__connected_nodes:
+                visited_nodes.add(forbidden_on_start_node)
 
             for node in current_node.__connected_nodes:
                 if node in visited_nodes:
@@ -123,7 +140,7 @@ class Node:
             else:
                 current_node = ordered_unvisited_nodes[0]
 
-            visited_nodes.add(current_node)
+            is_start = False
 
         return distances
 

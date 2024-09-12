@@ -27,11 +27,15 @@ class Game:
         nodes_builder = OriginalMapNodesBuilder()
         nodes_builder.define_default_connections()
 
-        self.__field = GameField(
-            self.__screen, self.__game_clock, self.__handle_pacman_eaten
-        )
         self.__nodes = nodes_builder.get_nodes()
         self.__nodes_storage = NodesStorage(self.__nodes)
+
+        self.__field = GameField(
+            self.__screen,
+            self.__game_clock,
+            self.__nodes_storage,
+            self.__handle_pacman_eaten,
+        )
 
         self.__widgets = [LivesCounterWidget(self.__field)]
         self.__pacman = None

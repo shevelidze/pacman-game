@@ -1,6 +1,7 @@
 from typing import Callable
 import pygame
 from .game_clock import GameClock
+from .nodes_storage import NodesStorage
 
 
 class GameField:
@@ -8,6 +9,7 @@ class GameField:
         self,
         screen: pygame.Surface,
         game_clock: GameClock,
+        nodes_storage: NodesStorage,
         handle_pacman_eaten: Callable,
     ):
         self.__screen = screen
@@ -15,6 +17,7 @@ class GameField:
         self.__game_clock = game_clock
         self.__lives = 3
         self.__handle_pacman_eaten = handle_pacman_eaten
+        self.__nodes_storage = nodes_storage
 
     def handle_pacman_eaten(self):
         if self.__lives <= 0 or not self.__game_clock.is_started():
@@ -22,6 +25,9 @@ class GameField:
 
         self.__lives -= 1
         self.__handle_pacman_eaten()
+
+    def get_nodes_storage(self):
+        return self.__nodes_storage
 
     def get_lives(self):
         return self.__lives

@@ -59,4 +59,4 @@ class Pacman(MovableObjectOnField):
         )
 
     __next_direction: Direction | None = Direction.LEFT
-    _speed = 0.1
+    _speed = 0.07

@@ -1,8 +1,16 @@
+from .utils import get_distance
+
+
 class NodesStorage:
     def __init__(self, nodes):
         self.__nodes = nodes
         self.__nodes_by_identifier = dict(
             (node.get_identifier(), node) for node in nodes
+        )
+
+    def get_closest_node_to_position(self, position):
+        return min(
+            self.__nodes, key=lambda node: get_distance(node.get_position(), position)
         )
 
     def get_nodes(self):
