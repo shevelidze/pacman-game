@@ -53,7 +53,7 @@ class Pacman(MovableObjectOnField):
 
         pygame.draw.circle(
             screen,
-            (255, 255, 0),
+            (253, 255, 59),
             self._get_position_on_screen(),
             15,
         )

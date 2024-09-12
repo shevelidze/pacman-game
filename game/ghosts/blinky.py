@@ -6,3 +6,6 @@ class Blinky(Ghost):
 
     def _get_target_node(self):
         return self._pacman.get_previous_node()
+
+    def _can_exit_room(self):
+        return True

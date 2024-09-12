@@ -16,3 +16,6 @@ class Pinky(Ghost):
             if not pacman_direction is None
             else self._pacman.get_previous_node()
         )
+
+    def _can_exit_room(self):
+        return True

@@ -1,4 +1,4 @@
-from typing import Callable, Self, Iterable
+from typing import Callable, Self, Iterable, Tuple
 import math
 from .utils import flatten, get_angle_direction, get_vector, get_distance
 from .direction import Direction
@@ -30,26 +30,36 @@ class Node:
         self.__connected_nodes.append(node)
         node.__connected_nodes.append(self)
 
-    def get_edges_positions(self, visited_nodes: set["Node"] = None):
+    def get_edges_positions(self):
+        return map(
+            lambda edge: (edge[0].get_position(), edge[1].get_position()),
+            self.get_edges_recursively(),
+        )
+
+    def get_edges_recursively(
+        self, edges: list[("Node", "Node")] = None, visited_nodes: set["Node"] = None
+    ):
         if visited_nodes is None:
             visited_nodes = set()
 
         if self in visited_nodes:
             return set()
 
-        edges_positions: set[((float, float), (float, float))] = set()
+        if edges is None:
+            edges = set()
 
         visited_nodes.add(self)
 
         for node in self.__connected_nodes:
-            edges_positions.add((self.__position, node.__position))
+            if (self, node) in edges or (node, self) in edges:
+                continue
 
-        return edges_positions.union(
-            flatten(
-                list(connected_node.get_edges_positions(visited_nodes))
-                for connected_node in self.__connected_nodes
-            )
-        )
+            edges.add((self, node))
+
+        for connected_node in self.__connected_nodes:
+            connected_node.get_edges_recursively(edges, visited_nodes)
+
+        return edges
 
     def get_node_direction(self, node: "Node") -> Direction:
         other_node_position = node.get_position()
@@ -69,9 +79,14 @@ class Node:
         return None
 
     def get_shortest_path_to(
-        self, node: "Node", forbidden_on_start_node: "Node" = None
+        self,
+        node: "Node",
+        forbidden_on_start_node: "Node" = None,
+        forbidden_edges: Iterable[Tuple["Node", "Node"]] = None,
     ):
-        distances = self.find_shortest_distances(forbidden_on_start_node)
+        distances = self.find_shortest_distances(
+            forbidden_on_start_node, forbidden_edges
+        )
 
         if not node in distances:
             return None
@@ -102,10 +117,16 @@ class Node:
         return list(reversed(path))
 
     # Dijkstra's algorithm
-    def find_shortest_distances(self, forbidden_on_start_node: "Node" = None):
+    def find_shortest_distances(
+        self,
+        forbidden_on_start_node: "Node" = None,
+        forbidden_edges: Iterable[Tuple["Node", "Node"]] = None,
+    ):
         nodes = set([self])
         visited_nodes = set()
         distances = {self: 0}
+        if forbidden_edges is None:
+            forbidden_edges = []
 
         current_node = self
         is_start = True
@@ -118,7 +139,11 @@ class Node:
                 visited_nodes.add(forbidden_on_start_node)
 
             for node in current_node.__connected_nodes:
-                if node in visited_nodes:
+                if (
+                    node in visited_nodes
+                    or (node, current_node) in forbidden_edges
+                    or (current_node, node) in forbidden_edges
+                ):
                     continue
 
                 new_distance = distances[current_node] + current_node.get_distance_to(
@@ -146,21 +171,3 @@ class Node:
 
     def get_distance_to(self, node: "Node"):
         return get_distance(self.get_position(), node.get_position())
-
-    def bfs(callback: Callable[["Node"], bool]):
-        visited_nodes = set()
-
-        queue = [self]
-
-        while queue:
-            node = queue.pop(0)
-
-            if node in visited_nodes:
-                continue
-
-            visited_nodes.add(node)
-
-            if callback(node):
-                return
-
-            queue.extend(node.__connected_nodes)

@@ -10,6 +10,7 @@ from .pacman import Pacman
 from .game_field import GameField
 from .ghosts import Blinky, Clyde, Inky, Pinky
 from .widgets import TimeoutCounterWidget, LivesCounterWidget, GameOverWidget
+from .point import Point
 
 pygame.init()
 pygame.font.init()
@@ -40,6 +41,7 @@ class Game:
         self.__widgets = [LivesCounterWidget(self.__field)]
         self.__pacman = None
         self.__ghosts = None
+        self.__points = Point.generate_points(self.__field, self.__get_pacman)
 
         self.__start_game()
 
@@ -69,6 +71,15 @@ class Game:
 
             pygame.display.flip()
 
+    def __get_pacman(self):
+        return self.__pacman
+
+    def __get_total_points_count(self):
+        return len(self.__points)
+
+    def __get_eaten_points_count(self):
+        return len(list(filter(lambda point: point.is_eaten(), self.__points)))
+
     def __handle_pacman_eaten(self):
         if self.__field.get_lives() <= 0:
             self.__game_clock.stop()
@@ -90,7 +101,7 @@ class Game:
         if self.__pacman is None:
             return []
 
-        return [self.__pacman] + self.__ghosts
+        return self.__points + [self.__pacman] + self.__ghosts
 
     def __create_pacman(self):
         return Pacman(
@@ -103,26 +114,34 @@ class Game:
     def __create_ghosts(self, pacman):
         blinky = Blinky(
             self.__field,
-            self.__nodes_storage.get_node_by_identifier("ghosts_room_x1y1"),
+            self.__nodes_storage.get_node_by_identifier("x6y9"),
             pacman,
+            self.__get_total_points_count,
+            self.__get_eaten_points_count,
         )
 
         clyde = Clyde(
             self.__field,
             self.__nodes_storage.get_node_by_identifier("ghosts_room_x2y1"),
             pacman,
+            self.__get_total_points_count,
+            self.__get_eaten_points_count,
         )
 
         inky = Inky(
             self.__field,
             self.__nodes_storage.get_node_by_identifier("ghosts_room_x1y2"),
             pacman,
+            self.__get_total_points_count,
+            self.__get_eaten_points_count,
         )
 
         pinky = Pinky(
             self.__field,
             self.__nodes_storage.get_node_by_identifier("ghosts_room_x2y2"),
             pacman,
+            self.__get_total_points_count,
+            self.__get_eaten_points_count,
         )
 
         return [blinky, clyde, inky, pinky]
@@ -134,11 +153,11 @@ class Game:
             position1 = self.__field.map_graph_position_to_screen(edge_position1)
             position2 = self.__field.map_graph_position_to_screen(edge_position2)
 
-            pygame.draw.line(self.__screen, (0, 0, 255), position1, position2, 2)
+            pygame.draw.line(self.__screen, (39, 16, 172), position1, position2, 2)
 
-        for node in self.__nodes:
-            position = self.__field.map_graph_position_to_screen(node.get_position())
-            pygame.draw.circle(self.__screen, (0, 0, 225), position, 5)
+        # for node in self.__nodes:
+        #     position = self.__field.map_graph_position_to_screen(node.get_position())
+        #     pygame.draw.circle(self.__screen, (0, 0, 225), position, 5)
 
     def __tick_objects_on_field(self, events):
         for object_on_field in self.__get_objects_on_field():

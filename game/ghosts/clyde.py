@@ -13,3 +13,6 @@ class Clyde(Ghost):
             return self._field.get_nodes_storage().get_node_by_identifier("x5y9")
 
         return self._pacman.get_previous_node()
+
+    def _can_exit_room(self):
+        return self._get_eaten_dots_count() > self._get_total_dots_count() / 3

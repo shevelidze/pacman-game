@@ -1,5 +1,6 @@
 import pygame
 import random
+from typing import Callable
 
 from .movable_object_on_field import MovableObjectOnField
 from .pacman import Pacman
@@ -12,11 +13,15 @@ class Ghost(MovableObjectOnField):
         field,
         previous_node,
         pacman: Pacman,
+        get_total_dots_count: Callable[[], int],
+        get_eaten_dots_count: Callable[[], int],
         next_node=None,
         distance_from_previous_node=None,
     ):
         super().__init__(field, previous_node, next_node, distance_from_previous_node)
         self._pacman = pacman
+        self._get_total_dots_count = get_total_dots_count
+        self._get_eaten_dots_count = get_eaten_dots_count
 
     def _get_target_node(self):
         raise NotImplementedError
@@ -54,9 +59,25 @@ class Ghost(MovableObjectOnField):
         ) or self._next_node == target_node:
             self._set_next_node(self._get_random_next_node())
         else:
+            nodes_storage = self._field.get_nodes_storage()
+
             shortest_path = self.get_last_node().get_shortest_path_to(
                 target_node,
                 self._previous_node if not self._next_node is None else None,
+                (
+                    None
+                    if self._can_exit_room()
+                    else [
+                        (
+                            nodes_storage.get_node_by_identifier(
+                                "ghosts_room_outer_exit"
+                            ),
+                            nodes_storage.get_node_by_identifier(
+                                "ghosts_room_inner_exit"
+                            ),
+                        )
+                    ]
+                ),
             )
 
             if shortest_path is None:
@@ -80,5 +101,8 @@ class Ghost(MovableObjectOnField):
 
         pygame.draw.rect(screen, self._color, rect)
 
+    def _can_exit_room(self):
+        return False
+
     _pacman: Pacman
-    _speed = 0.05
+    _speed = 0.04
