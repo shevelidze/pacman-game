@@ -58,5 +58,8 @@ class Pacman(MovableObjectOnField):
             15,
         )
 
+    def _get_speed(self):
+        return self.__initial_speed + (self._field.get_level() * 0.01)
+
     __next_direction: Direction | None = Direction.LEFT
-    _speed = 0.07
+    __initial_speed = 0.07

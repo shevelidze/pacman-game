@@ -66,7 +66,7 @@ class MovableObjectOnField(ObjectOnField):
             return 0
 
         time_passed = self._get_game_time() - self.__started_moving_at
-        return time_passed * self._speed
+        return time_passed * self._get_speed()
 
     def _turn_around(self):
         self._distance_from_previous_node = (
@@ -83,5 +83,7 @@ class MovableObjectOnField(ObjectOnField):
         if self._is_moving():
             self._start_moving()
 
-    _speed = 0.01
+    def _get_speed(self) -> float:
+        raise NotImplementedError
+
     __started_moving_at = None

@@ -104,5 +104,8 @@ class Ghost(MovableObjectOnField):
     def _can_exit_room(self):
         return False
 
+    def _get_speed(self):
+        return self._initial_speed + (self._field.get_level() * 0.011)
+
     _pacman: Pacman
-    _speed = 0.04
+    _initial_speed = 0.04

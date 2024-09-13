@@ -9,7 +9,12 @@ from .timeout_clock import TimeoutClock
 from .pacman import Pacman
 from .game_field import GameField
 from .ghosts import Blinky, Clyde, Inky, Pinky
-from .widgets import TimeoutCounterWidget, LivesCounterWidget, GameOverWidget
+from .widgets import (
+    TimeoutCounterWidget,
+    LivesCounterWidget,
+    GameOverWidget,
+    LevelWidget,
+)
 from .point import Point
 
 pygame.init()
@@ -36,12 +41,15 @@ class Game:
             self.__game_clock,
             self.__nodes_storage,
             self.__handle_pacman_eaten,
+            self.__handle_start_next_level,
         )
 
-        self.__widgets = [LivesCounterWidget(self.__field)]
+        self.__widgets = [LivesCounterWidget(self.__field), LevelWidget(self.__field)]
         self.__pacman = None
         self.__ghosts = None
-        self.__points = Point.generate_points(self.__field, self.__get_pacman)
+        self.__points = None
+
+        self.__reset_points()
 
         self.__start_game()
 
@@ -87,6 +95,10 @@ class Game:
         else:
             self.__start_game()
 
+    def __handle_start_next_level(self):
+        self.__reset_points()
+        self.__start_game()
+
     def __start_game(self):
         self.__game_clock.stop()
         self.__reset_pacman_and_ghosts()
@@ -96,6 +108,14 @@ class Game:
     def __reset_pacman_and_ghosts(self):
         self.__pacman = self.__create_pacman()
         self.__ghosts = self.__create_ghosts(self.__pacman)
+
+    def __reset_points(self):
+        self.__points = Point.generate_points(
+            self.__field,
+            self.__get_pacman,
+            self.__get_total_points_count,
+            self.__get_eaten_points_count,
+        )
 
     def __get_objects_on_field(self):
         if self.__pacman is None:

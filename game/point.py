@@ -13,11 +13,15 @@ class Point(ObjectOnField):
         field,
         previous_node,
         get_pacman: Callable[[], Pacman],
+        get_total_dots_count: Callable[[], int],
+        get_eaten_dots_count: Callable[[], int],
         next_node=None,
         distance_from_previous_node=None,
     ):
         super().__init__(field, previous_node, next_node, distance_from_previous_node)
         self.__get_pacman = get_pacman
+        self.__get_total_dots_count = get_total_dots_count
+        self.__get_eaten_dots_count = get_eaten_dots_count
 
     def tick(self, events):
         if self.__is_eaten:
@@ -30,6 +34,9 @@ class Point(ObjectOnField):
 
         if get_distance(self._get_position(), pacman._get_position()) < 5:
             self.__is_eaten = True
+
+            if self.__get_total_dots_count() == self.__get_eaten_dots_count():
+                self._field.start_next_level()
 
     def draw(self, screen):
         if self.__is_eaten:
@@ -46,7 +53,12 @@ class Point(ObjectOnField):
         return self.__is_eaten
 
     @staticmethod
-    def generate_points(field: GameField, get_pacman: Callable[[], Pacman]):
+    def generate_points(
+        field: GameField,
+        get_pacman: Callable[[], Pacman],
+        get_total_dots_count: Callable[[], int],
+        get_eaten_dots_count: Callable[[], int],
+    ):
         points = []
 
         edges = field.get_nodes_storage().get_nodes()[0].get_edges_recursively()
@@ -90,7 +102,9 @@ class Point(ObjectOnField):
                     Point(
                         field,
                         node1,
-                        get_pacman=get_pacman,
+                        get_pacman,
+                        get_total_dots_count,
+                        get_eaten_dots_count,
                         next_node=node2,
                         distance_from_previous_node=distance_from_previous_node,
                     )
@@ -104,7 +118,9 @@ class Point(ObjectOnField):
                 Point(
                     field,
                     node,
-                    get_pacman=get_pacman,
+                    get_pacman,
+                    get_total_dots_count,
+                    get_eaten_dots_count,
                 )
             )
 

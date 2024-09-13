@@ -11,13 +11,23 @@ class GameField:
         game_clock: GameClock,
         nodes_storage: NodesStorage,
         handle_pacman_eaten: Callable,
+        handle_start_next_level: Callable,
     ):
         self.__screen = screen
         self.__size = (210, 232)
         self.__game_clock = game_clock
-        self.__lives = 3
+        self.__lives = self.__get_initial_lives()
         self.__handle_pacman_eaten = handle_pacman_eaten
         self.__nodes_storage = nodes_storage
+        self.__level = self.__get_initial_level()
+        self.__handle_start_next_level = handle_start_next_level
+
+    def start_next_level(self):
+        self.__level += 1
+        self.__handle_start_next_level()
+
+    def get_level(self):
+        return self.__level
 
     def handle_pacman_eaten(self):
         if self.__lives <= 0 or not self.__game_clock.is_started():
@@ -49,3 +59,9 @@ class GameField:
         return x_margin + self.map_graph_coordinate_to_screen(
             x
         ), y_margin + self.map_graph_coordinate_to_screen(y)
+
+    def __get_initial_lives(self):
+        return 3
+
+    def __get_initial_level(self):
+        return 0
