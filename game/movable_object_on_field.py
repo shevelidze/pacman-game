@@ -31,6 +31,9 @@ class MovableObjectOnField(ObjectOnField):
 
         return super()._get_position(additional_distance=final_additional_distance)
 
+    def get_position(self):
+        return self._get_position()
+
     def _is_moving(self):
         return self.__started_moving_at is not None
 

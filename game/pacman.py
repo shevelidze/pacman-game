@@ -9,10 +9,13 @@ class Pacman(MovableObjectOnField):
         self,
         field,
         previous_node,
+        get_auto_pilot_next_node,
         next_node=None,
         distance_from_previous_node=None,
     ):
         super().__init__(field, previous_node, next_node, distance_from_previous_node)
+        self.__is_auto_pilot_on = False
+        self.__get_auto_pilot_next_node = get_auto_pilot_next_node
 
     def tick(self, events):
         super().tick(events)
@@ -30,6 +33,8 @@ class Pacman(MovableObjectOnField):
                     self.__next_direction = Direction.UP
                 if event.key == pygame.K_DOWN:
                     self.__next_direction = Direction.DOWN
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    self.__toggle_auto_pilot()
 
         if not self.__next_direction is None and self.__next_direction.is_opposite_to(
             self._get_direction()
@@ -37,6 +42,14 @@ class Pacman(MovableObjectOnField):
             self._turn_around()
 
     def _on_reached_node(self):
+        if self.__is_auto_pilot_on:
+            next_node = self.__get_auto_pilot_next_node()
+
+            if not next_node is None:
+                self._set_next_node(next_node)
+
+            return
+
         if self.__next_direction is None:
             return
 
@@ -60,6 +73,9 @@ class Pacman(MovableObjectOnField):
 
     def _get_speed(self):
         return self.__initial_speed + (self._field.get_level() * 0.01)
+
+    def __toggle_auto_pilot(self):
+        self.__is_auto_pilot_on = not self.__is_auto_pilot_on
 
     __next_direction: Direction | None = Direction.LEFT
     __initial_speed = 0.07

@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 from .node import Node
 from .nodes_storage import NodesStorage
@@ -65,9 +66,6 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.__start_game()
-
             self.__screen.fill((0, 0, 0))
 
             self.__tick_widgets(events)
@@ -123,10 +121,38 @@ class Game:
 
         return self.__points + [self.__pacman] + self.__ghosts
 
+    def __get_pacman_auto_pilot_next_node(self):
+        ghosts_distances = [
+            ghost.get_last_node().find_shortest_distances() for ghost in self.__ghosts
+        ]
+
+        pacman_last_node = self.__pacman.get_last_node()
+        suitable_nodes = list(
+            filter(
+                lambda node: all(
+                    [distances[node] > 10 for distances in ghosts_distances]
+                )
+                and all(
+                    [
+                        not ghost.get_last_node() == node
+                        and not ghost.get_previous_node() == node
+                        for ghost in self.__ghosts
+                    ]
+                ),
+                pacman_last_node.get_connected_nodes(),
+            )
+        )
+
+        if len(suitable_nodes) == 0:
+            suitable_nodes = pacman_last_node.get_connected_nodes()
+
+        return random.choice(suitable_nodes)
+
     def __create_pacman(self):
         return Pacman(
             self.__field,
             self.__nodes_storage.get_node_by_identifier("x6y8"),
+            self.__get_pacman_auto_pilot_next_node,
             self.__nodes_storage.get_node_by_identifier("x5y8"),
             11,
         )
