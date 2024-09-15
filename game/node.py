@@ -26,6 +26,9 @@ class Node:
     def get_identifier(self):
         return self.__identifier
 
+    def has_connected_nodes(self):
+        return len(self.__connected_nodes) > 0
+
     def connect(self, node: "Node"):
         self.__connected_nodes.append(node)
         node.__connected_nodes.append(self)

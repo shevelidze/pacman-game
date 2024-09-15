@@ -111,7 +111,10 @@ class Point(ObjectOnField):
                 )
 
         for node in field.get_nodes_storage().get_nodes():
-            if node.get_identifier() in no_points_nodes_identifiers:
+            if (
+                node.get_identifier() in no_points_nodes_identifiers
+                or not node.has_connected_nodes()
+            ):
                 continue
 
             points.append(

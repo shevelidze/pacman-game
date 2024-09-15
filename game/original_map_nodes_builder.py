@@ -1,3 +1,4 @@
+import random
 from .nodes_storage import NodesStorage
 from .node import Node
 
@@ -99,7 +100,10 @@ class OriginalMapNodesBuilder:
         self.__storage = NodesStorage(self.__nodes)
 
     def define_default_connections(self):
+        seed = random.randint(0, 100)
+
         self.__storage.connect_nodes_by_identifiers("x1y1", "x3y1")
+
         self.__storage.connect_nodes_by_identifiers("x1y1", "x1y2")
         self.__storage.connect_nodes_by_identifiers("x1y2", "x1y3")
         self.__storage.connect_nodes_by_identifiers("x1y3", "x3y3")
@@ -112,7 +116,10 @@ class OriginalMapNodesBuilder:
         self.__storage.connect_nodes_by_identifiers("x2y9", "x1y9")
         self.__storage.connect_nodes_by_identifiers("x1y9", "x1y10")
         self.__storage.connect_nodes_by_identifiers("x1y10", "x5y10")
-        self.__storage.connect_nodes_by_identifiers("x5y10", "x6y10")
+
+        if seed % 2 == 1:
+            self.__storage.connect_nodes_by_identifiers("x5y10", "x6y10")
+
         self.__storage.connect_nodes_by_identifiers("x6y10", "x10y10")
         self.__storage.connect_nodes_by_identifiers("x10y10", "x10y9")
         self.__storage.connect_nodes_by_identifiers("x10y9", "x9y9")
@@ -126,7 +133,10 @@ class OriginalMapNodesBuilder:
         self.__storage.connect_nodes_by_identifiers("x10y3", "x10y2")
         self.__storage.connect_nodes_by_identifiers("x10y2", "x10y1")
         self.__storage.connect_nodes_by_identifiers("x10y1", "x8y1")
-        self.__storage.connect_nodes_by_identifiers("x8y1", "x8y2")
+
+        if seed % 2 == 0:
+            self.__storage.connect_nodes_by_identifiers("x8y1", "x8y2")
+
         self.__storage.connect_nodes_by_identifiers("x8y2", "x10y2")
         self.__storage.connect_nodes_by_identifiers("x8y2", "x8y3")
         self.__storage.connect_nodes_by_identifiers("x8y2", "x7y2")
@@ -135,18 +145,27 @@ class OriginalMapNodesBuilder:
         self.__storage.connect_nodes_by_identifiers("x6y3", "x6y4")
         self.__storage.connect_nodes_by_identifiers("x6y4", "x7y4")
         self.__storage.connect_nodes_by_identifiers("x7y4", "x7y5")
-        self.__storage.connect_nodes_by_identifiers("x7y5", "x8y5")
+
+        if seed % 2 == 1:
+            self.__storage.connect_nodes_by_identifiers("x7y5", "x8y5")
+
         self.__storage.connect_nodes_by_identifiers("x7y5", "x7y6")
         self.__storage.connect_nodes_by_identifiers("x7y6", "x4y6")
         self.__storage.connect_nodes_by_identifiers("x4y6", "x4y5")
         self.__storage.connect_nodes_by_identifiers("x4y5", "x3y5")
         self.__storage.connect_nodes_by_identifiers("x4y5", "x4y4")
         self.__storage.connect_nodes_by_identifiers("x4y4", "x5y4")
-        self.__storage.connect_nodes_by_identifiers("x5y4", "x5y3")
-        self.__storage.connect_nodes_by_identifiers("x5y3", "x4y3")
-        self.__storage.connect_nodes_by_identifiers("x4y3", "x4y2")
+
+        if seed % 3 == 0:
+            self.__storage.connect_nodes_by_identifiers("x5y4", "x5y3")
+            self.__storage.connect_nodes_by_identifiers("x5y3", "x4y3")
+            self.__storage.connect_nodes_by_identifiers("x4y3", "x4y2")
+
         self.__storage.connect_nodes_by_identifiers("x4y2", "x3y2")
-        self.__storage.connect_nodes_by_identifiers("x3y2", "x1y2")
+
+        if seed % 2 == 0:
+            self.__storage.connect_nodes_by_identifiers("x3y2", "x1y2")
+
         self.__storage.connect_nodes_by_identifiers("x3y2", "x3y3")
         self.__storage.connect_nodes_by_identifiers("x3y2", "x3y1")
         self.__storage.connect_nodes_by_identifiers("x3y1", "x5y1")
